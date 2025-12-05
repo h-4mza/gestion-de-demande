@@ -1,0 +1,241 @@
+// assets/js/validateur.js
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkAuthentication();
+  loadValidationRequests();
+  refreshStats();
+});
+
+// Charger les demandes à valider (équipe du validateur)
+function loadValidationRequests() {
+  fetch('../../process/get_demandes_validateur.php')
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.getElementById("validationTable");
+      tbody.innerHTML = "";
+
+      if (!data.success) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center text-danger py-4">
+              ${data.message || 'Erreur de chargement'}
+            </td>
+          </tr>`;
+        return;
+      }
+
+      if (!data.demandes || data.demandes.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">
+              Aucune demande à valider pour votre équipe
+            </td>
+          </tr>`;
+        return;
+      }
+
+      data.demandes.forEach(request => {
+        const row = document.createElement("tr");
+
+        const canDecide =
+          request.statut === 'en_attente' ||
+          request.statut === 'en_cours_de_validation';
+
+        
+        const disabledAttr = canDecide ? '' : 'disabled';
+
+        row.innerHTML = `
+          <td><strong>#${request.id}</strong></td>
+          <td>${request.demandeur_prenom} ${request.demandeur_nom}</td>
+          <td>${request.type_nom}</td>
+          <td>${truncateText(request.description || '', 70)}</td>
+          <td>
+            <span class="badge ${getUrgencyBadgeClass(request.urgence)}">
+              ${capitalizeFirst(request.urgence)}
+            </span>
+          </td>
+          <td>${formatDate(request.created_at)}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1"
+                    onclick="openValidationModal(${request.id}, 'valider')"
+                    ${disabledAttr}>
+              <i class="bi bi-check-lg"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                    onclick="openValidationModal(${request.id}, 'rejeter')"
+                    ${disabledAttr}>
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error('Erreur:', error);
+      const tbody = document.getElementById("validationTable");
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="text-center text-danger py-4">
+            Erreur de chargement
+          </td>
+        </tr>`;
+    });
+}
+
+// Ouvrir la modale de validation/rejet
+function openValidationModal(id, type) {
+  const title = document.getElementById("validationTitle");
+  const commentHelp = document.getElementById("commentHelp");
+  const submitBtn = document.getElementById("validationSubmitBtn");
+  const summary = document.getElementById("requestSummary");
+
+  document.getElementById("currentRequestId").value = id;
+  document.getElementById("validationType").value = type;
+  document.getElementById("validationComment").value = "";
+
+  if (type === 'valider') {
+    title.textContent = `Valider la demande #${id}`;
+    commentHelp.textContent = "Le commentaire est optionnel.";
+    submitBtn.classList.remove('btn-danger');
+    submitBtn.classList.add('btn-primary');
+    submitBtn.textContent = "Confirmer la validation";
+    summary.textContent = `Vous êtes sur le point de VALIDER la demande #${id}.`;
+  } else {
+    title.textContent = `Rejeter la demande #${id}`;
+    commentHelp.textContent = "Un commentaire est OBLIGATOIRE pour rejeter la demande.";
+    submitBtn.classList.remove('btn-primary');
+    submitBtn.classList.add('btn-danger');
+    submitBtn.textContent = "Confirmer le rejet";
+    summary.textContent = `Vous êtes sur le point de REJETER la demande #${id}.`;
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById("validationModal"));
+  modal.show();
+}
+
+// Soumission du formulaire de validation/rejet
+function handleValidation(event) {
+  event.preventDefault();
+
+  const id = parseInt(document.getElementById("currentRequestId").value, 10);
+  const type = document.getElementById("validationType").value; // 'valider' ou 'rejeter'
+  const commentaire = document.getElementById("validationComment").value.trim();
+
+  if (!id || !['valider', 'rejeter'].includes(type)) {
+    showToast('danger', 'Paramètres invalides.');
+    return;
+  }
+
+  if (type === 'rejeter' && !commentaire) {
+    showToast('danger', 'Un commentaire est obligatoire pour rejeter la demande.');
+    return;
+  }
+
+  fetch('../../process/validation_process.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, action: type, commentaire })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showToast('success', data.message || 'Décision enregistrée.');
+        bootstrap.Modal.getInstance(document.getElementById("validationModal")).hide();
+        loadValidationRequests();
+        refreshStats();
+      } else {
+        showToast('danger', data.message || 'Erreur lors de la décision.');
+      }
+    })
+    .catch(error => {
+      console.error('Erreur:', error);
+      showToast('danger', 'Erreur lors de la décision.');
+    });
+}
+
+// Rafraîchir les statistiques du validateur
+function refreshStats() {
+  fetch('../../process/get_stats.php')
+    .then(response => response.json())
+    .then(data => {
+      if (!data.success) return;
+      const stats = data.stats;
+
+      if (!stats) return;
+
+      const total = parseInt(stats.total || 0, 10);
+      const enAttente = parseInt(stats.en_attente || 0, 10);
+      const enCoursVal = parseInt(stats.en_cours_de_validation || 0, 10);
+      const validees = parseInt(stats.validee || 0, 10);
+      const rejetees = parseInt(stats.rejetee || 0, 10);
+
+      const pending = enAttente + enCoursVal;
+
+      const totalEl = document.getElementById("totalRequests");
+      const pendingEl = document.getElementById("pendingValidation");
+      const approvedEl = document.getElementById("approvedCount");
+      const rejectedEl = document.getElementById("rejectedCount");
+
+      if (totalEl) totalEl.textContent = total;
+      if (pendingEl) pendingEl.textContent = pending;
+      if (approvedEl) approvedEl.textContent = validees;
+      if (rejectedEl) rejectedEl.textContent = rejetees;
+    })
+    .catch(error => console.error('Erreur stats:', error));
+}
+
+// ==== Helpers visuels ====
+
+function truncateText(text, maxLength) {
+  if (!text) return '';
+  return text.length > maxLength ? text.substring(0, maxLength) + '…' : text;
+}
+
+function getUrgencyBadgeClass(urgence) {
+  switch (urgence) {
+    case 'faible': return 'bg-secondary';
+    case 'moyenne': return 'bg-warning text-dark';
+    case 'urgente': return 'bg-danger';
+    default: return 'bg-light text-dark';
+  }
+}
+
+function capitalizeFirst(str) {
+  if (!str) return '';
+  str = str.toString();
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date)) return dateStr;
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Petit toaster
+function showToast(type, message) {
+  const container = document.createElement('div');
+  container.className = 'position-fixed top-0 end-0 p-3';
+  container.style.zIndex = '9999';
+
+  container.innerHTML = `
+    <div class="toast show align-items-center text-white bg-${type} border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(container);
+  setTimeout(() => container.remove(), 3000);
+}

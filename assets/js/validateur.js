@@ -250,7 +250,7 @@ function showToast(type, message) {
   setTimeout(() => container.remove(), 3000);
 }
 
-// assets/js/validateur.js — replace openAttachments function with this
+// assets/js/validateur.js
 function openAttachments(demandeId) {
   const url = `../../process/get_attachments.php?demande_id=${demandeId}`;
   fetch(url)
@@ -265,17 +265,16 @@ function openAttachments(demandeId) {
       } else {
         container.innerHTML = "";
         data.attachments.forEach(att => {
-          // att.filename already normalized by PHP (e.g. "assets/uploads/xyz.png")
+          
           const stored = att.filename || null;
           const original = att.original_name || att.nom_fichier || 'Pièce jointe';
           if (!stored) {
-            // skip or show a note (no valid file path)
+            
             container.innerHTML += `<div class="text-muted mb-2">Fichier introuvable: ${escapeHtml(original)}</div>`;
             return;
           }
-          // build href relative to current page: use the path returned by PHP
-          // if your dashboard is at pages/validateur/dashboard.php, prefix with ../../
-          const basePrefix = '../../'; // keep same prefix you used elsewhere
+          
+          const basePrefix = '../../'; 
           const href = stored.startsWith('http') ? stored : (basePrefix + stored.replace(/^\/+/, ''));
           const sizeText = att.size ? ` <small class="text-muted">(${Math.round(att.size/1024)} KB)</small>` : '';
           container.innerHTML += `

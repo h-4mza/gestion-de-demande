@@ -14,7 +14,7 @@ $db = $database->getConnection();
 $demande = new Demande($db);
 $typeBesoin = new TypeBesoin($db);
 
-// Récupérer les stats (Maintenant avec les bons noms de colonnes grâce à l'étape 1)
+// Récupérer les stats 
 $raw_stats = $demande->getStatistics(null, 'administrateur');
 
 // Sécurisation des données pour éviter "Undefined array key"

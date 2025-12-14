@@ -419,7 +419,7 @@ $types = $types_stmt->fetchAll();
         </div>
     </main>
 
-    <!-- Laisse tout ce qui suit (modales + scripts) TEL QUEL -->
+   
 
 
     <!-- Modal Nouvelle Demande -->
@@ -507,7 +507,7 @@ $types = $types_stmt->fetchAll();
                     <div class="mb-4">
                         <h6 class="text-muted">Historique</h6>
                         <div class="timeline" id="detailsTimeline">
-                            <!-- Populated by JavaScript -->
+                            
                         </div>
                     </div>
 

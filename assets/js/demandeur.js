@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadDashboardStats();
   loadRequestsTable();
 
-  // Reset du formulaire quand on ferme la modale (IMPORTANT)
+  // Reset du formulaire quand on ferme la modale 
   const modalEl = document.getElementById('newRequestModal');
   if (modalEl) {
     modalEl.addEventListener('hidden.bs.modal', resetModalForm);
@@ -22,7 +22,6 @@ function loadDashboardStats() {
       if (d.success) {
         document.getElementById("totalRequests").textContent = d.stats.total || 0;
         document.getElementById("pendingRequests").textContent = d.stats.en_attente || 0;
-        // Note: selon votre get_stats.php, vérifiez si les clés sont "en_attente" ou autre
         document.getElementById("approvedRequests").textContent = d.stats.validee || 0;
         document.getElementById("rejectedRequests").textContent = d.stats.rejetee || 0;
       }
@@ -30,7 +29,7 @@ function loadDashboardStats() {
     .catch(error => console.error('Erreur:', error));
 }
 
-// Charger le tableau des demandes (uniquement les demandes "nouvelles" / en_attente)
+// en_attente)
 function loadRequestsTable() {
   fetch('../../process/get_demandes.php')
     .then(r => r.json())
@@ -45,7 +44,7 @@ function loadRequestsTable() {
         return;
       }
 
-      // On ne garde que les demandes "nouvelles" (non traitées) : statut en_attente
+      // statut en_attente
       const enAttente = data.demandes.filter(req => req.statut === 'en_attente');
 
       if (enAttente.length === 0) {
@@ -143,7 +142,7 @@ function handleNewRequest(event) {
   formData.append('description', document.getElementById("requestDescription").value);
   formData.append('urgence', document.getElementById("requestUrgency").value);
 
-  // Gestion des fichiers (Optionnel : si on permet l'ajout de nouveaux fichiers en édition)
+  // Gestion des fichiers 
   const fileInput = document.getElementById("requestFiles");
   if(fileInput.files.length > 0) {
       for (let i = 0; i < fileInput.files.length; i++) {
@@ -151,11 +150,11 @@ function handleNewRequest(event) {
       }
   }
 
-  // DÉCISION IMPORTANTE : Création ou Mise à jour ?
+  
   let url = '../../process/create_demande.php';
   
   if (isEditing && editId) {
-    url = '../../process/update_demande.php'; // On appelle le script de mise à jour
+    url = '../../process/update_demande.php'; 
     formData.append('id', editId);
   }
 

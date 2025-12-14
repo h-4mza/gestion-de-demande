@@ -3,11 +3,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   checkAuthentication();
   
-  // On lance les graphiques TOUT DE SUITE pour qu'ils s'affichent
+
   initActivityChart();
   initDistributionChart();
   
-  // Ensuite les données
+ 
   loadStatistics();
   loadAdminDemandes();
   loadAdminUsers();

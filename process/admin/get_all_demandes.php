@@ -17,8 +17,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'administrateur')
 $database = new Database();
 $db = $database->getConnection();
 
-// --- CORRECTION ---
-// On ajoute le LEFT JOIN sur 'types_besoins' et on sélectionne 't.nom AS type_nom'
+
 $sql = "
 SELECT d.*, 
        u.nom AS demandeur_nom, 

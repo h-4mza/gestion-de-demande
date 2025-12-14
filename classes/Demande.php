@@ -208,8 +208,7 @@ public function getStatistics($user_id = null, $role = null) {
             return $stmt->fetch();
 
         } else if ($role === 'administrateur') {
-            // --- CORRECTION MAJEURE ICI ---
-            // On renomme les colonnes pour qu'elles correspondent EXACTEMENT au tableau $stats du dashboard
+            
             $query = "
             SELECT 
                 COUNT(*) AS total,

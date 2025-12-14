@@ -1,4 +1,4 @@
-// assets/js/mes-demandes.js - Adapté pour PHP/MySQL
+// assets/js/mes-demandes.js 
 
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Charger toutes les demandes, mais ne garder ici que les demandes "finalisées"
+// Charger toutes les demandes
 function loadAllDemandes() {
   fetch('../../process/get_demandes.php')
     .then(response => response.json())

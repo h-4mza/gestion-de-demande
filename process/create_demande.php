@@ -74,7 +74,7 @@ try {
         }
     }
 
-    // 4. Notifications (NE DOIT PAS CASSER la création en cas d'erreur)
+    // 4. Notifications 
     try {
         // 4.1 Notif au DEMANDEUR
         $notif = new Notification($db);
@@ -126,7 +126,7 @@ try {
             }
         }
     } catch (Throwable $eNotif) {
-        // On ignore les erreurs de notif pour ne pas casser la création
+       
     }
 
     // 5. Réponse OK

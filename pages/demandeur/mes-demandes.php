@@ -283,7 +283,7 @@ $types = $types_stmt->fetchAll();
                 </div>
 
                 <!-- Profil -->
-             <!-- Profil simple (pas de menu, pas de déconnexion ici) -->
+             
 <div class="d-flex align-items-center gap-2">
     <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow"
          style="width: 32px; height: 32px;">
@@ -379,7 +379,7 @@ $types = $types_stmt->fetchAll();
         </div>
     </main>
 
-    <!-- Laisse ici ton Modal Détails existant + scripts -->
+   
 
     <!-- Modal Détails (même que dashboard) -->
     <div class="modal fade" id="detailsModal" tabindex="-1">

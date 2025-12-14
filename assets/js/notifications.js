@@ -1,12 +1,11 @@
 // assets/js/notifications.js
 
-// BASE_URL doit être défini dans chaque page PHP avant ce script.
-// Exemple : const BASE_URL = '../..'; ou '.'.
+
 const NOTIF_BASE = (typeof BASE_URL !== "undefined") ? BASE_URL : ".";
 
 let notifData = [];
 
-// Petit helper toast si pas déjà défini ailleurs
+
 if (typeof showToast === "undefined") {
   window.showToast = function (type, message) {
     const container = document.createElement('div');
@@ -118,13 +117,11 @@ function renderNotifications() {
       const demandeId = btn.getAttribute("data-demande");
       markNotificationAsRead(id);
 
-      // TODO : Si tu veux ouvrir le détail de la demande,
-      // tu peux ici appeler ta fonction existante showDemandeDetails(demandeId)
-      // selon le rôle (demandeur/validateur/admin).
+      
     });
   });
 
-  // Popup "vous avez X nouvelles notifications" (appel uniquement au chargement)
+  // Popup "vous avez X nouvelles notifications" 
   if (unreadCount > 0) {
     showToast('info', `Vous avez ${unreadCount} notification(s) non lue(s).`);
   }

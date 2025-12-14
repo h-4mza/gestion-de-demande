@@ -27,8 +27,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $db = $database->getConnection();
     $demande = new Demande($db);
 
-    // 2. Vérification de sécurité (Propriétaire + Statut)
-    // On vérifie que la demande appartient bien à l'utilisateur et qu'elle est "en_attente"
+   
     $checkQuery = "SELECT demandeur_id, statut FROM demandes WHERE id = :id";
     $stmt = $db->prepare($checkQuery);
     $stmt->bindParam(':id', $id);
@@ -50,9 +49,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // 3. Mise à jour
-    // On utilise la méthode update() existante dans votre classe Demande
-    // (Voir classes/Demande.php qui filtre déjà sur "en_attente")
+    // 3. Mise à jour de la demande
     $demande->id = $id;
     $demande->type_id = $type_id;
     $demande->description = $description;

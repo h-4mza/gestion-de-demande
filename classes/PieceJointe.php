@@ -31,8 +31,7 @@ class PieceJointe {
         return $stmt->execute();
     }
     
-   // classes/PieceJointe.php (replace method)
-// classes/PieceJointe.php (replace method)
+   
 public function getByDemande($demande_id) {
     $query = "SELECT id, demande_id, nom_fichier, chemin_fichier, taille, type_mime
               FROM " . $this->table . " 
@@ -41,7 +40,7 @@ public function getByDemande($demande_id) {
     $stmt = $this->conn->prepare($query);
     $stmt->bindValue(':demande_id', (int)$demande_id, PDO::PARAM_INT);
     $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC); // <-- return array, not statement
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); 
 }
 
 }

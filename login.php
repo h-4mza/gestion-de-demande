@@ -135,7 +135,7 @@ if(isset($_SESSION['user_id']) && $_SESSION['logged_in']) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/auth.js"></script>
     <script>
-        // Toggle password visibility
+        
         document.getElementById('togglePassword').addEventListener('click', function() {
             const password = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');

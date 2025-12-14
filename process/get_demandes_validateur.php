@@ -15,7 +15,7 @@ $database = new Database();
 $db       = $database->getConnection();
 
 try {
-    // Fixed: added missing comma after u.prenom AS demandeur_prenom
+    
     $sql = "
         SELECT 
             d.*,
@@ -35,7 +35,7 @@ try {
 
     $stmt = $db->prepare($sql);
 
-    // Use bindValue instead of bindParam with session direct value
+    
     $stmt->bindValue(':chef_id', (int) $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
 
@@ -55,7 +55,7 @@ try {
 
 } catch (PDOException $e) {
     http_response_code(500);
-    // Do not leak sensitive info in production; useful for debugging now
+    
     echo json_encode([
         'success' => false,
         'message' => 'Erreur base de données',

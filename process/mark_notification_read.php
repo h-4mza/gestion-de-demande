@@ -27,7 +27,7 @@ try {
     $db = $database->getConnection();
     $notif = new Notification($db);
 
-    // (Optionnel mais recommandé) vérifier que la notif appartient bien à l'utilisateur
+    // Vérifier que la notification appartient à l'utilisateur
     $stmt = $db->prepare("SELECT user_id FROM notifications WHERE id = :id");
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();

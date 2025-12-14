@@ -16,7 +16,7 @@ $pj = new PieceJointe($db);
 
 try {
     $rows = $pj->getByDemande($demandeId);
-    // If getByDemande returns PDOStatement, convert it
+    
     if ($rows instanceof PDOStatement) {
         $rows = $rows->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -30,10 +30,7 @@ foreach ($rows as $r) {
     // determine the stored path
     $rawPath = $r['chemin_fichier'] ?? $r['filename'] ?? $r['file_name'] ?? null;
 
-    // if rawPath exists, normalize it to a web-safe relative path:
-    // - remove any leading "./" or "../"
-    // - if it contains "assets/uploads", use the substring from that folder
-    // - otherwise, use basename and prefix with "assets/uploads/"
+    
     $filenameWeb = null;
     if ($rawPath) {
         // normalize slashes
@@ -41,7 +38,7 @@ foreach ($rows as $r) {
         // if contains assets/uploads, extract starting at that folder
         $pos = strpos($rp, 'assets/uploads');
         if ($pos !== false) {
-            $filenameWeb = substr($rp, $pos); // e.g. "assets/uploads/1765_....png"
+            $filenameWeb = substr($rp, $pos); 
         } else {
             // fallback to basename
             $base = basename($rp);
